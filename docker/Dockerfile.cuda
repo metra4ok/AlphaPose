@@ -1,0 +1,43 @@
+FROM nvcr.io/nvidia/cuda:11.1.1-devel-ubuntu20.04
+
+ENV DEBIAN_FRONTEND noninteractive
+
+ENV TORCH_CUDA_ARCH_LIST="3.7;5.0;6.0;7.0;7.5;8.0;8.6"
+ENV TORCH_NVCC_FLAGS="-Xfatbin -compress-all"
+
+# Install system dependencies for convinient development inside container
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y \
+        tmux \
+        openssh-server \
+        tree \
+        less \
+        vim \
+        curl \
+        wget \
+        build-essential \
+        python3-pip && \
+    rm -rf /var/lib/apt/lists/* && \
+    pip3 install setuptools~=57.4.0
+
+# Install latest stable version of PyTorch
+RUN pip3 install torch==1.9.0+cu111 torchvision==0.10.0+cu111 -f https://download.pytorch.org/whl/torch_stable.html
+
+# Installing AlphaPose
+RUN mkdir AlphaPose/
+COPY . /AlphaPose/
+WORKDIR /AlphaPose
+RUN export PATH=/usr/local/cuda/bin/:$PATH && \
+    export LD_LIBRARY_PATH=/usr/local/cuda/lib64/:$LD_LIBRARY_PATH && \
+    apt-get update && apt-get upgrade -y && \
+    apt-get install -y \
+        libyaml-dev \
+        gfortran \
+        ninja-build \
+        libopenblas-dev \
+        liblapack-dev \
+        python3-opencv \
+        python3-numpy && \
+    pip3 install -r requirements.txt && \
+    python3 setup.py build develop --user
+

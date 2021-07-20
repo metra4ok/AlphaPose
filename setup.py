@@ -160,7 +160,7 @@ def get_ext_modules():
 
 def get_install_requires():
     install_requires = [
-        'six', 'terminaltables', 'scipy==1.1.0',
+        'six', 'terminaltables', 'scipy~=1.1.0',
         'opencv-python', 'matplotlib', 'visdom',
         'tqdm', 'tensorboardx', 'easydict',
         'pyyaml',
@@ -169,7 +169,7 @@ def get_install_requires():
     ]
     # official pycocotools doesn't support Windows, we will install it by third-party git repository later
     if platform.system() != 'Windows':
-        install_requires.append('pycocotools==2.0.0')
+        install_requires.append('pycocotools~=2.0.2')
     return install_requires
 
 
@@ -214,9 +214,9 @@ if __name__ == '__main__':
     # Windows need pycocotools here: https://github.com/philferriere/cocoapi#subdirectory=PythonAPI
     if platform.system() == 'Windows' and not is_installed('pycocotools'):
         print("\nInstall third-party pycocotools for Windows...")
-        cmd = 'python -m pip install git+https://github.com/philferriere/cocoapi.git#subdirectory=PythonAPI'
+        cmd = 'python3 -m pip install git+https://github.com/philferriere/cocoapi.git#subdirectory=PythonAPI'
         os.system(cmd)
     if not is_installed('cython_bbox'):
         print("\nInstall `cython_bbox`...")
-        cmd = 'python -m pip install git+https://github.com/yanfengliu/cython_bbox.git'
+        cmd = 'python3 -m pip install git+https://github.com/yanfengliu/cython_bbox.git'
         os.system(cmd)
